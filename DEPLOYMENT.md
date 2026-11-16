@@ -1,6 +1,6 @@
 # Vercel Deployment
 
-This repository keeps the existing React/Vite frontend and Express/Mongoose API. Vercel serves the frontend as static assets and invokes the Express app through `api/[...path].js`; API routes remain under `/api`. MongoDB Atlas is the persistent database. The Express app can still run locally with `npm start`.
+This repository keeps the existing React/Vite frontend and Express/Mongoose API as two Vercel services in one project. The `backend` Express service receives `/api/*`; the `frontend` Vite service receives all other paths and serves the SPA fallback. MongoDB Atlas is the persistent database. The Express app can still run locally with `npm start`.
 
 ## 1. Prepare the repository on GitHub
 
@@ -22,9 +22,9 @@ The current CRM has sign-in and administrator-managed user creation, but no publ
 ## 3. Import into Vercel
 
 1. In Vercel, choose **Add New → Project**, connect GitHub, and import the repository.
-2. Keep the project root at the repository root. `vercel.json` supplies the install command, build command, output directory, serverless function settings, API catch-all, and SPA fallback.
-3. The configured commands are `npm ci --prefix backend && npm ci --prefix frontend` and `npm --prefix frontend run build`; the output is `frontend/dist`.
-4. Use the default Vercel Node.js runtime for the API function. The Express function has a 30-second maximum duration.
+2. Keep the project root at the repository root. Set the Vercel project framework to **Services** (if enabled for your account); Vercel requires this project framework together with the `services` key to build services mode.
+3. `vercel.json` defines independent Express and Vite builds, exposes `/api/*` to the backend, routes other paths to the frontend, and provides the frontend SPA fallback. Backend packages install from `backend/package-lock.json`; frontend packages install from `frontend/package-lock.json`. The backend Express entrypoint is `backend/server.js` and its function duration is capped at 30 seconds.
+4. There are no service bindings: browser API calls use the public same-origin `/api` path, and the backend connects to MongoDB Atlas directly. A binding is only needed for server-side calls from one Vercel service to another.
 
 ## 4. Set environment variables
 
@@ -47,7 +47,7 @@ After changing environment variables, redeploy so both the function and frontend
 ## 5. Deploy
 
 1. Deploy the project from the Vercel dashboard or push to the connected branch.
-2. Wait for both the frontend build and function packaging to complete. Review build and function logs for missing environment variables or dependency errors.
+2. Wait for both service builds to complete. Review build and function logs for missing environment variables or dependency errors.
 3. Open the deployment URL over HTTPS. Add the production hostname to `CLIENT_ORIGIN` only when cross-origin access is needed; a same-project `/api` call does not need CORS.
 4. Use a controlled admin account to create users and verify account roles. Do not use the sample admin credentials on a public deployment.
 
@@ -80,7 +80,7 @@ For local API use, copy `backend/.env.example` to `backend/.env`, set `MONGODB_U
 - **Function returns 500:** Check Vercel function logs and confirm `MONGODB_URI` and `JWT_SECRET` are present in the deployment environment. The API intentionally returns a generic error body for server failures.
 - **MongoDB selection timeout:** Verify Atlas database user/password, database name, URL encoding, cluster availability, and Network Access rules. Vercel serverless outbound IPs may not be fixed.
 - **CORS error:** Same-project hosting should use the default `/api` URL. For a separate API, add the exact frontend origin (scheme and hostname, no path) to `CLIENT_ORIGIN`, and set `VITE_API_URL` to the API's HTTPS `/api` base URL.
-- **API 404:** Confirm `api/[...path].js` was committed and the request path begins with `/api/`.
+- **API 404:** Confirm the project framework is **Services**, the top-level `/api/(.*)` rewrite targets `backend`, and the Express routes continue to use the `/api` prefix.
 - **Refresh returns 404:** Confirm the project root is the repository root and `vercel.json` is present; redeploy after correcting project settings.
 - **Stale or invalid login:** Check `JWT_SECRET` is stable between invocations and that the user is active. Changing the secret invalidates all existing tokens.
 - **Build fails:** Review Vercel build logs and run the local checks above with Node.js 18 or newer. Ensure Vercel uses the repository root and the lockfiles are committed.
