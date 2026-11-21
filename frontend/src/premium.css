@@ -282,3 +282,67 @@ html[data-theme="dark"] .global-search-result-copy strong,html[data-theme="dark"
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
 }
+
+
+/* Existing CRM stage names retain their original semantics in the refreshed badge system. */
+.badge.stage-New { border-color:#d8defe; color:#3730a3; background:#e9edff; }
+.badge.stage-Contacted { border-color:#f1dfae; color:#87570b; background:#fff6dc; }
+.badge.stage-Qualified { border-color:#bcecf3; color:#145c70; background:#e4f9fc; }
+.badge.stage-Proposal { border-color:#c6e7fa; color:#075985; background:#eaf6fd; }
+.badge.stage-Negotiation { border-color:#f1dfae; color:#87570b; background:#fff6dc; }
+.badge.stage-Converted { border-color:#bce7d0; color:#166534; background:#eaf8ef; }
+.badge.stage-Lost { border-color:#f1d1d1; color:#991b1b; background:#fff0f0; }
+html[data-theme="dark"] .badge.stage-New { border-color:#41447a; color:#b9bbff; background:#25294b; }
+html[data-theme="dark"] .badge.stage-Contacted,html[data-theme="dark"] .badge.stage-Negotiation { border-color:#62512b; color:#f1d58c; background:#352c1b; }
+html[data-theme="dark"] .badge.stage-Qualified { border-color:#285666; color:#92deef; background:#18313d; }
+html[data-theme="dark"] .badge.stage-Proposal { border-color:#294f70; color:#9dcaf2; background:#1a2d40; }
+html[data-theme="dark"] .badge.stage-Converted { border-color:#285d48; color:#84d7ab; background:#18372b; }
+html[data-theme="dark"] .badge.stage-Lost { border-color:#663d43; color:#ffaaaa; background:#3d252b; }
+
+@media (max-width:860px) {
+  .app-shell { flex-direction:column; }
+  .sidebar,.sidebar.sidebar-collapsed {
+    width:100%; flex-basis:auto; height:auto; position:static; flex-direction:row; flex-wrap:wrap;
+    align-items:center; padding:9px 12px 8px;
+  }
+  .sidebar-brand-row { flex:1 1 auto; min-height:36px; margin:0; }
+  .sidebar-collapse { display:none; }
+  .brand { padding:0 5px 0 0; }
+  .brand-name,.sidebar-collapsed .brand-name { display:inline; }
+  .sidebar-create,.sidebar-collapsed .sidebar-create {
+    width:auto; min-height:35px; margin:0 0 0 8px; padding:0 10px;
+  }
+  .sidebar-create span,.sidebar-collapsed .sidebar-create span { display:inline; }
+  .sidebar-navigation {
+    display:flex; flex-direction:row; flex:1 1 100%; order:3; gap:12px; overflow-x:auto; padding:8px 0 0;
+  }
+  .nav-group { display:flex; flex:0 0 auto; gap:3px; }
+  .nav-section-label,.sidebar-collapsed .nav-section-label { display:none; }
+  .nav-link,.sidebar-collapsed .nav-link {
+    justify-content:center; width:auto; min-height:37px; padding:0 10px; gap:7px; white-space:nowrap;
+  }
+  .nav-label,.sidebar-collapsed .nav-label { display:inline; }
+  .sidebar-utility { padding:0; border:0; margin-left:4px; }
+  .sidebar-utility-button,.sidebar-collapsed .sidebar-utility-button {
+    justify-content:center; width:36px; min-height:36px; padding:0;
+  }
+  .sidebar-utility-button span,.sidebar-collapsed .sidebar-utility-button span { display:none; }
+  .sidebar-footer,.sidebar-collapsed .sidebar-footer {
+    display:flex; align-items:center; gap:6px; padding:0; margin-left:6px; border:0;
+  }
+  .sidebar-account,.sidebar-collapsed .sidebar-account { padding:0; }
+  .account-copy,.sidebar-collapsed .account-copy { display:none; }
+  .sidebar-signout,.sidebar-collapsed .sidebar-signout {
+    justify-content:center; width:36px; min-height:36px; padding:0;
+  }
+  .sidebar-signout span,.sidebar-collapsed .sidebar-signout span { display:none; }
+  .content { padding:0; }
+}
+@media (max-width:520px) {
+  .sidebar { padding:8px 9px 7px; }
+  .sidebar-create { font-size:10px; }
+  .sidebar-navigation { gap:8px; }
+  .nav-group { gap:2px; }
+  .nav-link { min-height:34px; padding:0 8px; font-size:10px; }
+  .sidebar-utility-button,.sidebar-signout { width:32px; min-height:33px; }
+}
