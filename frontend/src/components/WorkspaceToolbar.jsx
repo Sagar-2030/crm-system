@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AlertCircle,
   Bell,
@@ -11,6 +11,10 @@ import {
   LoaderCircle,
   Search,
   X,
+  Plus,
+  ChevronDown,
+  Settings2,
+  LogOut,
 } from 'lucide-react';
 import api, { errMsg, fmtDate } from '../api.js';
 import { Alert } from './ui.jsx';
@@ -57,10 +61,18 @@ function NotificationTask({ task, overdue, onSelect }) {
 
 export default function WorkspaceToolbar() {
   const navigate = useNavigate();
-  const { isManager } = useAuth();
+  const location = useLocation();
+  const { isManager, user, logout } = useAuth();
+  const activePath = '/' + (location.pathname.split('/').filter(Boolean)[0] || '');
+  const currentTitle = {"/":"Dashboard","/leads":"Leads","/contacts":"Customers & contacts","/pipeline":"Sales pipeline","/tasks":"Tasks","/reports":"Reports & analytics","/users":"Team members","/settings":"Settings"}[activePath] || 'Workspace';
+
   const searchRef = useRef(null);
   const searchInputRef = useRef(null);
   const notificationRef = useRef(null);
+  const quickCreateRef = useRef(null);
+  const profileRef = useRef(null);
+  const [quickCreateOpen, setQuickCreateOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -143,6 +155,8 @@ export default function WorkspaceToolbar() {
     const closeMenus = (event) => {
       if (!searchRef.current?.contains(event.target)) setSearchOpen(false);
       if (!notificationRef.current?.contains(event.target)) setNotificationsOpen(false);
+      if (!quickCreateRef.current?.contains(event.target)) setQuickCreateOpen(false);
+      if (!profileRef.current?.contains(event.target)) setProfileOpen(false);
     };
     const handleKeyDown = (event) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
@@ -153,6 +167,8 @@ export default function WorkspaceToolbar() {
       if (event.key === 'Escape') {
         setSearchOpen(false);
         setNotificationsOpen(false);
+        setQuickCreateOpen(false);
+        setProfileOpen(false);
       }
     };
     document.addEventListener('mousedown', closeMenus);
@@ -186,6 +202,10 @@ export default function WorkspaceToolbar() {
 
   return (
     <div className="workspace-topbar">
+      <div className="workspace-context" aria-label="Current page">
+        <div className="workspace-context-breadcrumb"><span>Workspace</span><span>/</span><strong>{currentTitle}</strong></div>
+        <div className="workspace-context-title">{currentTitle}</div>
+      </div>
       <div className="global-search-wrap" ref={searchRef}>
         <div className={`global-search-box${searchOpen ? ' is-open' : ''}`}>
           <Search size={17} />
@@ -309,6 +329,36 @@ export default function WorkspaceToolbar() {
             </div>
           </div>
         )}
+      </div>
+
+      <div className="toolbar-actions">
+        <div className="quick-create-wrap" ref={quickCreateRef}>
+          <button type="button" className="quick-create-trigger" aria-expanded={quickCreateOpen} aria-haspopup="menu" onClick={() => { setQuickCreateOpen((open) => !open); setProfileOpen(false); }}>
+            <Plus size={15} /> Create <ChevronDown size={13} />
+          </button>
+          {quickCreateOpen && (
+            <div className="toolbar-popover" role="menu" aria-label="Quick create">
+              <button type="button" role="menuitem" onClick={() => { setQuickCreateOpen(false); navigate('/leads?create=1'); }}><BriefcaseBusiness size={15} /> New lead</button>
+              <button type="button" role="menuitem" onClick={() => { setQuickCreateOpen(false); navigate('/contacts?create=1'); }}><ContactRound size={15} /> New contact</button>
+              <button type="button" role="menuitem" onClick={() => { setQuickCreateOpen(false); navigate('/tasks?create=1'); }}><CalendarClock size={15} /> New task</button>
+            </div>
+          )}
+        </div>
+        <div className="profile-menu-wrap" ref={profileRef}>
+          <button type="button" className="profile-trigger" aria-expanded={profileOpen} aria-haspopup="menu" onClick={() => { setProfileOpen((open) => !open); setQuickCreateOpen(false); }}>
+            <span className="profile-trigger-avatar">{user?.name?.trim()?.charAt(0)?.toUpperCase() || 'U'}</span>
+            <span className="profile-trigger-copy"><strong>{user?.name || 'Account'}</strong><small>{user?.role ? user.role.replace('superadmin', 'Super Admin').replace('manager', 'Manager').replace('agent', 'Sales agent') : 'Workspace user'}</small></span>
+            <ChevronDown size={13} />
+          </button>
+          {profileOpen && (
+            <div className="toolbar-popover profile-popover" role="menu" aria-label="Account menu">
+              <div className="profile-menu-identity"><strong>{user?.name || 'Account'}</strong><small>{user?.email || 'Signed-in workspace account'}</small></div>
+              <div className="toolbar-popover-divider" />
+              <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); navigate('/settings'); }}><Settings2 size={15} /> Workspace settings</button>
+              <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); logout(); navigate('/login'); }}><LogOut size={15} /> Sign out</button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
