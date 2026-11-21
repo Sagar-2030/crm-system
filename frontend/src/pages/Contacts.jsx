@@ -28,7 +28,7 @@ function parseCustomerCsv(text) {
 }
 
 export default function Contacts() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { isManager } = useAuth();
   const fileInput = useRef(null);
   const [contacts, setContacts] = useState([]);
@@ -47,6 +47,17 @@ export default function Contacts() {
   const urlQuery = searchParams.get('q') || '';
 
   useEffect(() => setQ(urlQuery), [urlQuery]);
+  useEffect(() => {
+    if (searchParams.get('create') === '1') {
+      setEditing('');
+      setForm(blank);
+      setFormError('');
+      setShow(true);
+      const next = new URLSearchParams(searchParams);
+      next.delete('create');
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
   const load = useCallback(async (page = 1) => {
     try {
       const { data } = await api.get('/contacts', { params: { page, ...filters, ...(q ? { q } : {}) } });
