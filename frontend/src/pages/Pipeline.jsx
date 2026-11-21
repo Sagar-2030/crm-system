@@ -5,9 +5,9 @@ import api, { errMsg, fmtDate, fmtMoney, STAGES } from '../api.js';
 import { Alert, Empty } from '../components/ui.jsx';
 
 const stageTone = {
-  New: 'new', Contacted: 'contacted', Qualified: 'qualified',
-  Proposal: 'proposal', Negotiation: 'negotiation',
-  Converted: 'converted', Lost: 'lost',
+  New: 'New', Contacted: 'Contacted', Qualified: 'Qualified',
+  Proposal: 'Proposal', Negotiation: 'Negotiation',
+  Converted: 'Converted', Lost: 'Lost',
 };
 
 export default function Pipeline() {
