@@ -21,14 +21,20 @@ export default function Layout() {
   const groups = [
     { label: 'Workspace', links: [
       { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
-      { to: '/leads', label: 'Leads', icon: Users },
-      { to: '/contacts', label: 'Customers', icon: Contact },
-      { to: '/pipeline', label: 'Pipeline', icon: KanbanSquare },
-      { to: '/tasks', label: 'Tasks & meetings', icon: CheckSquare },
+      { to: '/tasks', label: 'My tasks', icon: CheckSquare },
     ] },
-    ...(isManager ? [{ label: 'Insights', links: [{ to: '/reports', label: 'Reports & analytics', icon: BarChart3 }] }] : []),
-    { label: 'Workspace setup', links: [
-      ...(isManager ? [{ to: '/users', label: 'Team members', icon: UserCog }] : []),
+    { label: 'Customers', links: [
+      { to: '/contacts', label: 'Customers & contacts', icon: Contact },
+      { to: '/leads', label: 'Leads', icon: Users },
+    ] },
+    { label: 'Sales', links: [
+      { to: '/pipeline', label: 'Sales pipeline', icon: KanbanSquare },
+    ] },
+    ...(isManager ? [{ label: 'Management', links: [
+      { to: '/reports', label: 'Reports & analytics', icon: BarChart3 },
+      { to: '/users', label: 'Team members', icon: UserCog },
+    ] }] : []),
+    { label: 'System', links: [
       { to: '/settings', label: 'Settings', icon: SettingsIcon },
     ] },
   ];
