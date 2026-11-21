@@ -9,7 +9,7 @@ const blank = { title: '', description: '', dueDate: '', priority: 'Medium', typ
 
 export default function Tasks() {
   const { isManager } = useAuth();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [tasks, setTasks] = useState([]);
   const [meta, setMeta] = useState({ page: 1, pages: 1 });
   const [filter, setFilter] = useState(() => searchParams.get('filter') || '');
@@ -30,6 +30,16 @@ export default function Tasks() {
   useEffect(() => {
     setQ(urlQuery);
   }, [urlQuery]);
+  useEffect(() => {
+    if (searchParams.get('create') === '1') {
+      setForm(blank);
+      setFormError('');
+      setShow(true);
+      const next = new URLSearchParams(searchParams);
+      next.delete('create');
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const load = useCallback(
     async (page = 1) => {
